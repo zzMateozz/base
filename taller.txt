@@ -1,0 +1,612 @@
+SQL> conn system/oracle@localhost:1521/xepdb1;
+Conectado.
+SQL> CREATE TABLESPACE academico03 DATAFILE 'C:\app\PC\product\18.0.0\oradata\XE\XEPDB1\academico03' SIZE 10M;
+
+Tablespace creado.
+
+SQL> CREATE USER admin IDENTIFIED BY oracle DEFAULT TABLESPACE academico03 TEMPORARY temp
+  2  QUOTA UNLIMITED ON academico03;
+CREATE USER admin IDENTIFIED BY oracle DEFAULT TABLESPACE academico03 TEMPORARY temp
+                                                                                *
+ERROR en línea 1:
+ORA-01907: palabra clave TABLESPACE esperada 
+
+
+SQL> CREATE USER admin IDENTIFIED BY oracle DEFAULT TABLESPACE academico03 TEMPORARY TABLESPACE temp
+  2  QUOTA UNLIMITED ON academico03;
+
+Usuario creado.
+
+SQL> CREATE USER consulta IDENTIFIED BY oracle DEFAULT TABLESPACE academico03 TEMPORARY TABLESPACE temp
+  2  QUOTA UNLIMITED ON academico03;
+
+Usuario creado.
+
+SQL> conn system/oracle@localhost:1521/xepdb1;
+Conectado.
+SQL> GRANT create session TO admin;
+
+Concesión terminada correctamente.
+
+SQL> GRANT create session TO consulta;
+
+Concesión terminada correctamente.
+
+SQL> conn admin/oracle@localhost:1521/xepdb1;
+Conectado.
+SQL> conn system/oracle@localhost:1521/xepdb1;
+Conectado.
+SQL> GRANT SELECT any table, delete any table, update any table TO admin;
+
+Concesión terminada correctamente.
+
+SQL> GRANT CREATE public synonym TO admin;
+
+Concesión terminada correctamente.
+
+SQL> GRANT SELECT any table TO consulta;
+
+Concesión terminada correctamente.
+
+SQL> conn admin/oracle@localhost:1521/xepdb1;
+Conectado.
+SQL> CREATE TABLE alumnos(ID_ALUM VARCHAR2(10), P_NOMBRE VARCHAR2(12), S_NOMBRE VARCHAR2(12), P_APELLIDO VARCHAR2(12), S_APELLIDO VARCHAR2(12), F_NACIMIENTO DATE, PROMEDIO NUMBER, ID_PROG VARCHAR2(2), ID_CIUDAD VARCHAR2(2);
+CREATE TABLE alumnos(ID_ALUM VARCHAR2(10), P_NOMBRE VARCHAR2(12), S_NOMBRE VARCHAR2(12), P_APELLIDO VARCHAR2(12), S_APELLIDO VARCHAR2(12), F_NACIMIENTO DATE, PROMEDIO NUMBER, ID_PROG VARCHAR2(2), ID_CIUDAD VARCHAR2(2)
+                                                                                                                                                                                                                        *
+ERROR en línea 1:
+ORA-00907: falta el paréntesis derecho 
+
+
+SQL> CREATE TABLE alumnos(ID_ALUM VARCHAR2(10), P_NOMBRE VARCHAR2(12), S_NOMBRE VARCHAR2(12), P_APELLIDO VARCHAR2(12), S_APELLIDO VARCHAR2(12), F_NACIMIENTO DATE, PROMEDIO NUMBER, ID_PROG VARCHAR2(2), ID_CIUDAD VARCHAR2(2));
+CREATE TABLE alumnos(ID_ALUM VARCHAR2(10), P_NOMBRE VARCHAR2(12), S_NOMBRE VARCHAR2(12), P_APELLIDO VARCHAR2(12), S_APELLIDO VARCHAR2(12), F_NACIMIENTO DATE, PROMEDIO NUMBER, ID_PROG VARCHAR2(2), ID_CIUDAD VARCHAR2(2))
+*
+ERROR en línea 1:
+ORA-01031: privilegios insuficientes 
+
+
+SQL> conn system/oracle@localhost:1521/xepdb1;
+Conectado.
+SQL> GRANT CRATE any table TO admin;
+GRANT CRATE any table TO admin
+      *
+ERROR en línea 1:
+ORA-00990: falta el privilegio o no es válido 
+
+
+SQL> GRANT create any table TO admin;
+
+Concesión terminada correctamente.
+
+SQL> conn admin/oracle@localhost:1521/xepdb1;
+Conectado.
+SQL> CREATE TABLE alumnos(ID_ALUM VARCHAR2(10), P_NOMBRE VARCHAR2(12), S_NOMBRE VARCHAR2(12), P_APELLIDO VARCHAR2(12), S_APELLIDO VARCHAR2(12), F_NACIMIENTO DATE, PROMEDIO NUMBER, ID_PROG VARCHAR2(2), ID_CIUDAD VARCHAR2(2));
+
+Tabla creada.
+
+SQL> CREATE TABLE facultades(ID_FACULTAD VARCHAR2(2), NOM_FACULTAD VARCHAR2(20)));
+CREATE TABLE facultades(ID_FACULTAD VARCHAR2(2), NOM_FACULTAD VARCHAR2(20)))
+                                                                           *
+ERROR en línea 1:
+ORA-00922: falta la opción o no es válida 
+
+
+SQL> CREATE TABLE facultades(ID_FACULTAD VARCHAR2(2), NOM_FACULTAD VARCHAR2(20));
+
+Tabla creada.
+
+SQL> CREATE TABLE programas(ID_PROG VARCHAR2(2), NOM_PROG VARCHAR2(20), CREDITOS NUMBER, ID_FACULTAD VARCHAR2(2));
+
+Tabla creada.
+
+SQL> CREATE TABLE ciudad(ID_CIUDAD VARCHAR2(2), NOM_CIUDAD VARCHAR2(20));
+
+Tabla creada.
+
+SQL> ALTER TABLE alumnos
+  2  ADD CONSTRAINT pk_alumno PRIMARY KEY(ID_ALUM);
+
+Tabla modificada.
+
+SQL> ALTER TABLE facultades ADD CONSTRAINT pk_facultades PRIMARY KEY(ID_FACULTAD);
+
+Tabla modificada.
+
+SQL> ALTER TABLE programas ADD CONSTRAINT pk_programas PRIMARY KEY(ID_PROG);
+
+Tabla modificada.
+
+SQL> ALTER TABLE ciudad ADD CONSTRAINT pk_ciudad PRIMARY KEY(ID_CIUDAD);
+
+Tabla modificada.
+
+SQL> ALTER TABLE alumnos ADD CONSTRAINT fk_prog FOREIGN KEY(ID_PROG)
+  2  REFERENCES ciudad (ID_CIUDAD);
+
+Tabla modificada.
+
+SQL> ALTER TABLE alumnos ADD CONSTRAINT fk_ciudad FOREIGN KEY(ID_CIUDAD)
+  2  REFERENCES ciudad (ID_CIUDAD);
+
+Tabla modificada.
+
+SQL> ALTER TABLE alumnos
+  2  DROP CONSTRAINT fk_prog;
+
+Tabla modificada.
+
+SQL> DESC alumnos;
+ Nombre                                    ¿Nulo?   Tipo
+ ----------------------------------------- -------- ----------------------------
+ ID_ALUM                                   NOT NULL VARCHAR2(10)
+ P_NOMBRE                                           VARCHAR2(12)
+ S_NOMBRE                                           VARCHAR2(12)
+ P_APELLIDO                                         VARCHAR2(12)
+ S_APELLIDO                                         VARCHAR2(12)
+ F_NACIMIENTO                                       DATE
+ PROMEDIO                                           NUMBER
+ ID_PROG                                            VARCHAR2(2)
+ ID_CIUDAD                                          VARCHAR2(2)
+
+SQL> ALTER TABLE alumnos ADD CONSTRAINT fk_programas FOREIGN KEY(ID_PROG)
+  2  REFERENCES programas (ID_PROG);
+
+Tabla modificada.
+
+SQL> ALTER TABLE programas ADD CONSTRAINT fk_faculta FOREIGN KEY(ID_FACULTAD)
+  2  REFERENCES facultades (ID_FACULTAD);
+
+Tabla modificada.
+
+SQL> CREATE PUBLIC SYNONYM alumnos_synm
+  2  FOR admin.alumnos;
+
+Sinónimo creado.
+
+SQL> CREATE PUBLIC SYNONYM programas_synm
+  2  FOR admin.programas;
+
+Sinónimo creado.
+
+SQL> CREATE PUBLIC SYNONYM facultades_synm
+  2  FOR admin.facultades;
+
+Sinónimo creado.
+
+SQL> CREATE PUBLIC SYNONYM ciudad_synm
+  2  FOR admin.ciudad,
+  3  ;
+FOR admin.ciudad,
+                *
+ERROR en línea 2:
+ORA-00933: comando SQL no terminado correctamente 
+
+
+SQL> CREATE PUBLIC SYNONYM ciudad_synm
+  2  FOR admin.ciudad;
+
+Sinónimo creado.
+
+SQL> DESC* academico03;
+SP2-0565: Identificador no válido.
+SQL> DESC admin;
+ERROR:
+ORA-04043: el objeto admin no existe 
+
+
+SQL> DESC alumnos;
+ Nombre                                    ¿Nulo?   Tipo
+ ----------------------------------------- -------- ----------------------------
+ ID_ALUM                                   NOT NULL VARCHAR2(10)
+ P_NOMBRE                                           VARCHAR2(12)
+ S_NOMBRE                                           VARCHAR2(12)
+ P_APELLIDO                                         VARCHAR2(12)
+ S_APELLIDO                                         VARCHAR2(12)
+ F_NACIMIENTO                                       DATE
+ PROMEDIO                                           NUMBER
+ ID_PROG                                            VARCHAR2(2)
+ ID_CIUDAD                                          VARCHAR2(2)
+
+SQL> INSERT INTO facultades (ID_FACULTAD, NOM_FACULTAD) VALUES('01', 'FACULTAD CIENCIAS ADMINISTRATIVAS CONTABLES Y ECONàMICAS');
+INSERT INTO facultades (ID_FACULTAD, NOM_FACULTAD) VALUES('01', 'FACULTAD CIENCIAS ADMINISTRATIVAS CONTABLES Y ECONàMICAS')
+                                                                *
+ERROR en línea 1:
+ORA-12899: el valor es demasiado grande para la columna 
+"ADMIN"."FACULTADES"."NOM_FACULTAD" (real: 57, máximo: 20) 
+
+
+SQL> INSERT INTO facultades (ID_FACULTAD, NOM_FACULTAD) VALUES('01', 'BELAS ARTES');
+
+1 fila creada.
+
+SQL> INSERT INTO facultades (ID_FACULTAD, NOM_FACULTAD) VALUES('02', 'CIENCIAS BASICAS');
+
+1 fila creada.
+
+SQL> INSERT INTO facultades (ID_FACULTAD, NOM_FACULTAD) VALUES('02', 'CIENCIAS DE LA SALUD');
+INSERT INTO facultades (ID_FACULTAD, NOM_FACULTAD) VALUES('02', 'CIENCIAS DE LA SALUD')
+*
+ERROR en línea 1:
+ORA-00001: restricción única (ADMIN.PK_FACULTADES) violada 
+
+
+SQL> INSERT INTO facultades (ID_FACULTAD, NOM_FACULTAD) VALUES('03', 'CIENCIAS DE LA SALUD');
+
+1 fila creada.
+
+SQL> INSERT INTO facultades (ID_FACULTAD, NOM_FACULTAD) VALUES('04', 'INGENIERIA Y TECNOLO');
+
+1 fila creada.
+
+SQL> INSERT INTO facultades (ID_FACULTAD, NOM_FACULTAD) VALUES('05', 'EDUCACION');
+
+1 fila creada.
+
+SQL> SELECT* FROM facultades;
+
+ID NOM_FACULTAD                                                                 
+-- --------------------                                                         
+01 BELAS ARTES                                                                  
+02 CIENCIAS BASICAS                                                             
+03 CIENCIAS DE LA SALUD                                                         
+04 INGENIERIA Y TECNOLO                                                         
+05 EDUCACION                                                                    
+
+SQL> INSERT INTO programas (ID_PROG, NOM_PROG, CREDITOS, ID_FACULTAD) VALUES ('01', 'MUSICA');
+INSERT INTO programas (ID_PROG, NOM_PROG, CREDITOS, ID_FACULTAD) VALUES ('01', 'MUSICA')
+                                                                 *
+ERROR en línea 1:
+ORA-00947: no hay suficientes valores 
+
+
+SQL> INSERT INTO programas (ID_PROG, NOM_PROG, CREDITOS, ID_FACULTAD) VALUES ('01', 'MUSICA', '170', '01');
+
+1 fila creada.
+
+SQL> INSERT INTO programas (ID_PROG, NOM_PROG, CREDITOS, ID_FACULTAD) VALUES ('01', 'LICENCIATURA EN ARTE', '168', '01');
+INSERT INTO programas (ID_PROG, NOM_PROG, CREDITOS, ID_FACULTAD) VALUES ('01', 'LICENCIATURA EN ARTE', '168', '01')
+*
+ERROR en línea 1:
+ORA-00001: restricción única (ADMIN.PK_PROGRAMAS) violada 
+
+
+SQL> INSERT INTO programas (ID_PROG, NOM_PROG, CREDITOS, ID_FACULTAD) VALUES ('02', 'LICENCIATURA EN ARTE', '168', '01');
+
+1 fila creada.
+
+SQL> INSERT INTO programas (ID_PROG, NOM_PROG, CREDITOS, ID_FACULTAD) VALUES ('03', 'LIIC.NATUR Y AMBIENT', '166', '05');
+
+1 fila creada.
+
+SQL> INSERT INTO programas (ID_PROG, NOM_PROG, CREDITOS, ID_FACULTAD) VALUES ('04', 'LIIC. LITERATURA', '170', '05');
+
+1 fila creada.
+
+SQL> INSERT INTO programas (ID_PROG, NOM_PROG, CREDITOS, ID_FACULTAD) VALUES ('05', 'LIIC. EDU.FISICA', '165', '05');
+
+1 fila creada.
+
+SQL> INSERT INTO programas (ID_PROG, NOM_PROG, CREDITOS, ID_FACULTAD) VALUES ('06', 'LIIC.ESPA¥OL', '165', '05');
+
+1 fila creada.
+
+SQL> INSERT INTO programas (ID_PROG, NOM_PROG, CREDITOS, ID_FACULTAD) VALUES ('07', 'LIIC.INGLES', '165', '05');
+
+1 fila creada.
+
+SQL> INSERT INTO programas (ID_PROG, NOM_PROG, CREDITOS, ID_FACULTAD) VALUES ('07', 'LIIC.MATEMATICAS', '165', '05');
+INSERT INTO programas (ID_PROG, NOM_PROG, CREDITOS, ID_FACULTAD) VALUES ('07', 'LIIC.MATEMATICAS', '165', '05')
+*
+ERROR en línea 1:
+ORA-00001: restricción única (ADMIN.PK_PROGRAMAS) violada 
+
+
+SQL> INSERT INTO programas (ID_PROG, NOM_PROG, CREDITOS, ID_FACULTAD) VALUES ('08', 'LIIC.MATEMATICAS', '165', '05');
+
+1 fila creada.
+
+SQL> INSERT INTO programas (ID_PROG, NOM_PROG, CREDITOS, ID_FACULTAD) VALUES ('09', 'ENFERMERIA', '168', '03');
+
+1 fila creada.
+
+SQL> INSERT INTO programas (ID_PROG, NOM_PROG, CREDITOS, ID_FACULTAD) VALUES ('10', 'INSTRUM. QUIRURGICA', '160', '03');
+
+1 fila creada.
+
+SQL> INSERT INTO programas (ID_PROG, NOM_PROG, CREDITOS, ID_FACULTAD) VALUES ('11', 'MICROBIOLOGIA', '158', '02');
+
+1 fila creada.
+
+SQL> delete from programas
+  2  DFADS;
+
+11 filas suprimidas.
+
+SQL> sSELECT* from programas;
+SP2-0734: inicio "sSELECT* f..." de comando desconocido - resto de la línea ignorado.
+SQL> SELECT* FROM programas;
+
+ninguna fila seleccionada
+
+SQL> INSERT INTO programas (ID_PROG, NOM_PROG, CREDITOS, ID_FACULTAD) VALUES ('01', 'MUSICA', '170', '01');
+
+1 fila creada.
+
+SQL> INSERT INTO programas (ID_PROG, NOM_PROG, CREDITOS, ID_FACULTAD) VALUES ('02', 'LICENCIATURA EN ARTE', '168', '01');
+
+1 fila creada.
+
+SQL> INSERT INTO programas (ID_PROG, NOM_PROG, CREDITOS, ID_FACULTAD) VALUES ('03', 'LIIC.NATUR Y AMBIENT', '166', '05');
+
+1 fila creada.
+
+SQL> INSERT INTO programas (ID_PROG, NOM_PROG, CREDITOS, ID_FACULTAD) VALUES ('04', 'LIIC. LITERATURA', '170', '05');
+
+1 fila creada.
+
+SQL> INSERT INTO programas (ID_PROG, NOM_PROG, CREDITOS, ID_FACULTAD) VALUES ('05', 'LIIC. EDU.FISICA', '165', '05');
+
+1 fila creada.
+
+SQL> INSERT INTO programas (ID_PROG, NOM_PROG, CREDITOS, ID_FACULTAD) VALUES ('06', 'LIIC.ESPA¥OL', '165', '05');
+
+1 fila creada.
+
+SQL> INSERT INTO programas (ID_PROG, NOM_PROG, CREDITOS, ID_FACULTAD) VALUES ('07', 'LIIC.INGLES', '165', '05');
+
+1 fila creada.
+
+SQL> INSERT INTO programas (ID_PROG, NOM_PROG, CREDITOS, ID_FACULTAD) VALUES ('08', 'LIIC.MATEMATICAS', '165', '05');
+
+1 fila creada.
+
+SQL> INSERT INTO programas (ID_PROG, NOM_PROG, CREDITOS, ID_FACULTAD) VALUES ('09', 'ENFERMERIA', '168', '03');
+
+1 fila creada.
+
+SQL> INSERT INTO programas (ID_PROG, NOM_PROG, CREDITOS, ID_FACULTAD) VALUES ('10', 'INSTRUM. QUIRURGICA', '160', '03');
+
+1 fila creada.
+
+SQL> INSERT INTO programas (ID_PROG, NOM_PROG, CREDITOS, ID_FACULTAD) VALUES ('11', 'MICROBIOLOGIA', '158', '02');
+
+1 fila creada.
+
+SQL> INSERT INTO programas (ID_PROG, NOM_PROG, CREDITOS, ID_FACULTAD) VALUES ('12', 'INGE.AGROINDUSTRIAL', '187', '04');
+
+1 fila creada.
+
+SQL> INSERT INTO programas (ID_PROG, NOM_PROG, CREDITOS, ID_FACULTAD) VALUES ('12', 'INGE.AGROINDUSTRIAL', '187', '04');
+INSERT INTO programas (ID_PROG, NOM_PROG, CREDITOS, ID_FACULTAD) VALUES ('12', 'INGE.AGROINDUSTRIAL', '187', '04')
+*
+ERROR en línea 1:
+ORA-00001: restricción única (ADMIN.PK_PROGRAMAS) violada 
+
+
+SQL> INSERT INTO programas (ID_PROG, NOM_PROG, CREDITOS, ID_FACULTAD) VALUES ('12', 'INGE.AGROINDUSTRIAL', '187', '04');
+INSERT INTO programas (ID_PROG, NOM_PROG, CREDITOS, ID_FACULTAD) VALUES ('12', 'INGE.AGROINDUSTRIAL', '187', '04')
+*
+ERROR en línea 1:
+ORA-00001: restricción única (ADMIN.PK_PROGRAMAS) violada 
+
+
+SQL> INSERT INTO programas (ID_PROG, NOM_PROG, CREDITOS, ID_FACULTAD) VALUES ('12', 'INGE.AMBIENTAL', '169', '04');
+INSERT INTO programas (ID_PROG, NOM_PROG, CREDITOS, ID_FACULTAD) VALUES ('12', 'INGE.AMBIENTAL', '169', '04')
+*
+ERROR en línea 1:
+ORA-00001: restricción única (ADMIN.PK_PROGRAMAS) violada 
+
+
+SQL> INSERT INTO programas (ID_PROG, NOM_PROG, CREDITOS, ID_FACULTAD) VALUES ('13', 'INGE.AMBIENTAL', '169', '04');
+
+1 fila creada.
+
+SQL> INSERT INTO programas (ID_PROG, NOM_PROG, CREDITOS, ID_FACULTAD) VALUES ('13', 'INGE.AMBIENTAL', '169', '04');
+INSERT INTO programas (ID_PROG, NOM_PROG, CREDITOS, ID_FACULTAD) VALUES ('13', 'INGE.AMBIENTAL', '169', '04')
+*
+ERROR en línea 1:
+ORA-00001: restricción única (ADMIN.PK_PROGRAMAS) violada 
+
+
+SQL> INSERT INTO programas (ID_PROG, NOM_PROG, CREDITOS, ID_FACULTAD) VALUES ('14', 'INGE.SISTEMAS', '171', '04');
+
+1 fila creada.
+
+SQL> INSERT INTO programas (ID_PROG, NOM_PROG, CREDITOS, ID_FACULTAD) VALUES ('15', 'INGE.ELECTRONICA', '186', '04');
+
+1 fila creada.
+
+SQL> INSERT INTO alumnos (ID_ALUM, P_NOMBRE, S_NOMBRE, P_APELLIDO, S_APELLIDO, F_NACIMIENTO, PROMEDIO, ID_PROG, ID_CIUDAD) VALUES ('1003381551', 'MATEO', '', 'LàPEZ', 'PATI¥O',TO_DATE('2003-02-27','YYYY-MM-DD'),3.9,'04','01');
+INSERT INTO alumnos (ID_ALUM, P_NOMBRE, S_NOMBRE, P_APELLIDO, S_APELLIDO, F_NACIMIENTO, PROMEDIO, ID_PROG, ID_CIUDAD) VALUES ('1003381551', 'MATEO', '', 'LàPEZ', 'PATI¥O',TO_DATE('2003-02-27','YYYY-MM-DD'),3.9,'04','01')
+*
+ERROR en línea 1:
+ORA-02291: restricción de integridad (ADMIN.FK_CIUDAD) violada - clave 
+principal no encontrada 
+
+
+SQL> INSERT INTO ciudad (ID_CIUDAD, NOM_CIUDAD) VALUES ('01', 'VALLEDUPAR');
+
+1 fila creada.
+
+SQL> INSERT INTO ciudad (ID_CIUDAD, NOM_CIUDAD) VALUES ('02', 'BOGOTA');
+
+1 fila creada.
+
+SQL> INSERT INTO ciudad (ID_CIUDAD, NOM_CIUDAD) VALUES ('03', 'SANTA MARTA');
+
+1 fila creada.
+
+SQL> INSERT INTO ciudad (ID_CIUDAD, NOM_CIUDAD) VALUES ('04', 'CODAZZI');
+
+1 fila creada.
+
+SQL> INSERT INTO ciudad (ID_CIUDAD, NOM_CIUDAD) VALUES ('05', 'BOSCONIA');
+
+1 fila creada.
+
+SQL> INSERT INTO alumnos (ID_ALUM, P_NOMBRE, S_NOMBRE, P_APELLIDO, S_APELLIDO, F_NACIMIENTO, PROMEDIO, ID_PROG, ID_CIUDAD) VALUES ('1003381551', 'MATEO', '', 'LàPEZ', 'PATI¥O',TO_DATE('2003-02-27','YYYY-MM-DD'),3.9,'04','01');
+
+1 fila creada.
+
+SQL> INSERT INTO alumnos (ID_ALUM, P_NOMBRE, S_NOMBRE, P_APELLIDO, S_APELLIDO, F_NACIMIENTO, PROMEDIO, ID_PROG, ID_CIUDAD) VALUES ('1078445260', 'SARA', 'CAROLINA', 'BERMUDEZ', 'PALOMINO',TO_DATE('2004-08-27','YYYY-MM-DD'), 4.3,'04','01');
+
+1 fila creada.
+
+SQL> INSERT INTO alumnos (ID_ALUM, P_NOMBRE, S_NOMBRE, P_APELLIDO, S_APELLIDO, F_NACIMIENTO, PROMEDIO, ID_PROG, ID_CIUDAD) VALUES ('1078445260', 'SCARLET', '', 'HERNANDES', 'SUAREZ',TO_DATE('2000-05-15','YYYY-MM-DD'), 4.0,'03','02');
+INSERT INTO alumnos (ID_ALUM, P_NOMBRE, S_NOMBRE, P_APELLIDO, S_APELLIDO, F_NACIMIENTO, PROMEDIO, ID_PROG, ID_CIUDAD) VALUES ('1078445260', 'SCARLET', '', 'HERNANDES', 'SUAREZ',TO_DATE('2000-05-15','YYYY-MM-DD'), 4.0,'03','02')
+*
+ERROR en línea 1:
+ORA-00001: restricción única (ADMIN.PK_ALUMNO) violada 
+
+
+SQL> INSERT INTO alumnos (ID_ALUM, P_NOMBRE, S_NOMBRE, P_APELLIDO, S_APELLIDO, F_NACIMIENTO, PROMEDIO, ID_PROG, ID_CIUDAD) VALUES ('1004563325', 'SCARLET', '', 'HERNANDES', 'SUAREZ',TO_DATE('2000-05-15','YYYY-MM-DD'), 4.0,'03','02');
+
+1 fila creada.
+
+SQL> INSERT INTO alumnos (ID_ALUM, P_NOMBRE, S_NOMBRE, P_APELLIDO, S_APELLIDO, F_NACIMIENTO, PROMEDIO, ID_PROG, ID_CIUDAD) VALUES ('1007845547', 'SOFIA', '', 'FLORES', 'SANCHES',TO_DATE('2002-09-28','YYYY-MM-DD'), 4.7,'02','02');
+
+1 fila creada.
+
+SQL> INSERT INTO alumnos (ID_ALUM, P_NOMBRE, S_NOMBRE, P_APELLIDO, S_APELLIDO, F_NACIMIENTO, PROMEDIO, ID_PROG, ID_CIUDAD) VALUES ('1047887963', 'CAMILO', 'ANDRES', 'RAMIREZ', 'SANCHES',TO_DATE('2001-01-03','YYYY-MM-DD'), 3.2,'01','05');
+
+1 fila creada.
+
+SQL> INSERT INTO alumnos (ID_ALUM, P_NOMBRE, S_NOMBRE, P_APELLIDO, S_APELLIDO, F_NACIMIENTO, PROMEDIO, ID_PROG, ID_CIUDAD) VALUES ('1000654266', 'TOMAS', 'ANDRES', 'RAMIREZ', 'MERCADO',TO_DATE('2005-07-03','YYYY-MM-DD'), 3.0,'01','04');
+
+1 fila creada.
+
+SQL> INSERT INTO alumnos (ID_ALUM, P_NOMBRE, S_NOMBRE, P_APELLIDO, S_APELLIDO, F_NACIMIENTO, PROMEDIO, ID_PROG, ID_CIUDAD) VALUES ('1077448960', 'ANDREA', 'CAROLINA', 'ARIAS', 'MERCADO',TO_DATE('2005-01-23','YYYY-MM-DD'), 2.9,'03','04');
+
+1 fila creada.
+
+SQL> INSERT INTO alumnos (ID_ALUM, P_NOMBRE, S_NOMBRE, P_APELLIDO, S_APELLIDO, F_NACIMIENTO, PROMEDIO, ID_PROG, ID_CIUDAD) VALUES ('1080102579', 'ADRIAN', '', 'BARRIOS', 'ARIAS',TO_DATE('2003-11-29','YYYY-MM-DD'), 3.3,'05','03');
+
+1 fila creada.
+
+SQL> clean screen
+SP2-0734: inicio "clean scre..." de comando desconocido - resto de la línea ignorado.
+SQL> clear screen
+
+SQL> conn consulta/oracle@localhost:1521/xepdb1;
+Conectado.
+SQL> SELECT* FROM alumnos
+  2  ORDER BY P_APELLIDO;
+SELECT* FROM alumnos
+             *
+ERROR en línea 1:
+ORA-00942: la tabla o vista no existe 
+
+
+SQL> SELECT* FROM alumnos_synm
+  2  ORDER BY P_APELLIDO;
+
+ID_ALUM    P_NOMBRE     S_NOMBRE     P_APELLIDO   S_APELLIDO   F_NACIMI         
+---------- ------------ ------------ ------------ ------------ --------         
+  PROMEDIO ID ID                                                                
+---------- -- --                                                                
+1077448960 ANDREA       CAROLINA     ARIAS        MERCADO      23/01/05         
+       2,9 03 04                                                                
+                                                                                
+1080102579 ADRIAN                    BARRIOS      ARIAS        29/11/03         
+       3,3 05 03                                                                
+                                                                                
+1078445260 SARA         CAROLINA     BERMUDEZ     PALOMINO     27/08/04         
+       4,3 04 01                                                                
+                                                                                
+
+ID_ALUM    P_NOMBRE     S_NOMBRE     P_APELLIDO   S_APELLIDO   F_NACIMI         
+---------- ------------ ------------ ------------ ------------ --------         
+  PROMEDIO ID ID                                                                
+---------- -- --                                                                
+1007845547 SOFIA                     FLORES       SANCHES      28/09/02         
+       4,7 02 02                                                                
+                                                                                
+1004563325 SCARLET                   HERNANDES    SUAREZ       15/05/00         
+         4 03 02                                                                
+                                                                                
+1003381551 MATEO                     LàPEZ        PATI¥O       27/02/03         
+       3,9 04 01                                                                
+                                                                                
+
+ID_ALUM    P_NOMBRE     S_NOMBRE     P_APELLIDO   S_APELLIDO   F_NACIMI         
+---------- ------------ ------------ ------------ ------------ --------         
+  PROMEDIO ID ID                                                                
+---------- -- --                                                                
+1047887963 CAMILO       ANDRES       RAMIREZ      SANCHES      03/01/01         
+       3,2 01 05                                                                
+                                                                                
+1000654266 TOMAS        ANDRES       RAMIREZ      MERCADO      03/07/05         
+         3 01 04                                                                
+                                                                                
+
+8 filas seleccionadas.
+
+SQL> conn admin/oracle@localhost:1521/xepdb1;
+Conectado.
+SQL> ALTER TABLE table_name
+  2  dfkfsfs
+  3  ;
+dfkfsfs
+*
+ERROR en línea 2:
+ORA-01735: opción ALTER TABLE no válida 
+
+
+SQL> ALTER TABLE alumnos
+  2  RENAME ID_PROG TO ID_PROG;
+RENAME ID_PROG TO ID_PROG
+       *
+ERROR en línea 2:
+ORA-14155: falta la palabra clave PARTITION, PARTITIONS, SUBPARTITION o 
+SUBPARTITIONS 
+
+
+SQL> DESC alumnos
+ Nombre                                    ¿Nulo?   Tipo
+ ----------------------------------------- -------- ----------------------------
+ ID_ALUM                                   NOT NULL VARCHAR2(10)
+ P_NOMBRE                                           VARCHAR2(12)
+ S_NOMBRE                                           VARCHAR2(12)
+ P_APELLIDO                                         VARCHAR2(12)
+ S_APELLIDO                                         VARCHAR2(12)
+ F_NACIMIENTO                                       DATE
+ PROMEDIO                                           NUMBER
+ ID_PROG                                            VARCHAR2(2)
+ ID_CIUDAD                                          VARCHAR2(2)
+
+SQL> DESC ciudad
+ Nombre                                    ¿Nulo?   Tipo
+ ----------------------------------------- -------- ----------------------------
+ ID_CIUDAD                                 NOT NULL VARCHAR2(2)
+ NOM_CIUDAD                                         VARCHAR2(20)
+
+SQL> SELECT* FROM programas;
+
+ID NOM_PROG               CREDITOS ID                                           
+-- -------------------- ---------- --                                           
+01 MUSICA                      170 01                                           
+02 LICENCIATURA EN ARTE        168 01                                           
+03 LIIC.NATUR Y AMBIENT        166 05                                           
+04 LIIC. LITERATURA            170 05                                           
+05 LIIC. EDU.FISICA            165 05                                           
+06 LIIC.ESPA¥OL                165 05                                           
+07 LIIC.INGLES                 165 05                                           
+08 LIIC.MATEMATICAS            165 05                                           
+09 ENFERMERIA                  168 03                                           
+10 INSTRUM. QUIRURGICA         160 03                                           
+11 MICROBIOLOGIA               158 02                                           
+
+ID NOM_PROG               CREDITOS ID                                           
+-- -------------------- ---------- --                                           
+12 INGE.AGROINDUSTRIAL         187 04                                           
+13 INGE.AMBIENTAL              169 04                                           
+14 INGE.SISTEMAS               171 04                                           
+15 INGE.ELECTRONICA            186 04                                           
+
+15 filas seleccionadas.
+
+SQL> commit
+  2  ;
+
+Confirmación terminada.
+
+SQL> spool off
